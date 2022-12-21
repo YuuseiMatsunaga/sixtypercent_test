@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  frontend:
+    build: ./frontend
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/usr/src/app
+    command: sh -c 'npm run dev'
+    ports:
+      - '3000:3000'
+    tty: true
+  api:
+    build: ./api/
+    command: bash -c "rm -rf /tmp/pids/server.pid && bundle install --path vendor/bundle && RAILS_ENV=development bundle exec pumactl start"
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./api:/app:cached
+      - bundle_data:/usr/local/bundle:cached
+      - /app/vendor
+      - /app/log
+      - /app/.git
+      - tmp-data:/app/tmp
+    environment:
+      TZ: Asia/Tokyo
+      PORT: 5000
+    depends_on:
+      - frontend
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
+  mysql:
+    image: mysql/mysql-server:5.7
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - '3306:3306'
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - mysql_data:/var/lib/mysql
+    env_file:
+      - ./.env
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    tty: true
+    restart: always
+    depends_on:
+      - frontend
+      - api
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mysql
+    links:
+      - mysql
+    ports:
+      - 4040:80
+    volumes:
+      - ./phpmyadmin/sessions:/sessions
+
+volumes:
+  bundle_data:
+  mysql_data:
+  tmp-data:

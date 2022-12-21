@@ -1,0 +1,37 @@
+@startuml
+object products {
+    id: pk
+    title: string
+    price: number
+    variation: string
+    shop_id: fk
+}
+
+object orders {
+    id: pk
+    user_id: fk
+}
+
+object order_carts {
+    id: pk
+    product_id: fk
+    order_id: fk
+}
+
+object users {
+    id: pk
+    email: string
+    name: string
+}
+
+object shops {
+    id: pk
+    name: string
+}
+
+products "*" -- "1" shops
+users "1" -- "*" orders
+orders "*" -- "*" products
+order_carts "*" -- "1" orders
+order_carts "*" -- "1" products
+@enduml
