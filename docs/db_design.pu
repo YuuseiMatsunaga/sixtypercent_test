@@ -3,7 +3,6 @@ object products {
     id: pk
     title: string
     price: number
-    variation: string
     shop_id: fk
 }
 
@@ -33,13 +32,13 @@ object variations {
     id: pk
     product_id: fk
     color: string
-    size: enum(S, M, L, LL, 2L, 3L...)
+    size: enum(S, M, L, LL, O...)
 }
 
 products "*" -- "1" shops
 users "1" -- "*" orders
-orders "*" -- "*" products
 order_carts "*" -- "1" orders
 order_carts "*" -- "1" variations
 products "1" -- "*" variations
+orders "*" -- "*" variations
 @enduml
