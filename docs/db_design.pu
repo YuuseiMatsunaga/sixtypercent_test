@@ -14,7 +14,7 @@ object orders {
 
 object order_carts {
     id: pk
-    product_id: fk
+    variation_id: fk
     order_id: fk
 }
 
@@ -29,9 +29,17 @@ object shops {
     name: string
 }
 
+object variations {
+    id: pk
+    product_id: fk
+    color: string
+    size: enum(S, M, L, LL, 2L, 3L...)
+}
+
 products "*" -- "1" shops
 users "1" -- "*" orders
 orders "*" -- "*" products
 order_carts "*" -- "1" orders
-order_carts "*" -- "1" products
+order_carts "*" -- "1" variations
+products "1" -- "*" variations
 @enduml
