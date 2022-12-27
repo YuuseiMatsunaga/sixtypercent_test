@@ -7,6 +7,7 @@ services:
       - NODE_ENV=development
       - HOST=0.0.0.0
       - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
     volumes:
       - ./frontend:/usr/src/app
     command: sh -c 'npm run dev'
