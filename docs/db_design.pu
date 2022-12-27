@@ -9,6 +9,7 @@ object products {
 object orders {
     id: pk
     user_id: fk
+    shop_id: fk
 }
 
 object order_carts {
@@ -41,4 +42,5 @@ order_carts "*" -- "1" orders
 order_carts "*" -- "1" variations
 products "1" -- "*" variations
 orders "*" -- "*" variations
+shops "1" -- "*" orders
 @enduml
