@@ -14,9 +14,9 @@ module Types
       "Hello World!"
     end
 
-    field :users, [Types::UserType], null: true 
-    def users(**args)
-      User.all
+    field :products, [Types::ProductType], null: true 
+    def products(**args)
+      Product.all
     end
   end
 end
